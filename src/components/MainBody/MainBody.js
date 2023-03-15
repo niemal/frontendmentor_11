@@ -138,6 +138,7 @@ function MainBody() {
           filterList.includes(entry.level)
         ) {
           tmp.push(entry);
+          continue;
         }
 
         for (let lang of entry.languages) {
