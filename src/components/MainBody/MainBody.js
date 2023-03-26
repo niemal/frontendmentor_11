@@ -5,6 +5,7 @@ import Card from "../Card";
 import data from "./data.json";
 import { hoverSupported } from "../hoverSupported";
 import { QUERIES } from "../constants";
+import ClickableWrapper from "../ClickableWrapper";
 
 const Wrapper = styled.main`
   min-height: 100vh;
@@ -73,10 +74,16 @@ const InnerTagsContainer = styled.div`
   gap: 10px;
 `;
 
-const TagContainer = styled.div`
+const TagContainer = styled.button`
   display: flex;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
+  border-radius: 4px;
+
+  &:focus {
+    outline: 3px solid var(--color-dark-gray-cyan);
+    outline-offset: 6px;
+  }
 
   ${hoverSupported(css`
     &:hover {
@@ -107,11 +114,18 @@ const Cross = styled.img`
   height: 15px;
 `;
 
-const Clear = styled.span`
+const Clear = styled.button`
   font-weight: var(--font-weight-bold);
   color: var(--color-dark-gray-cyan);
   padding: 8px;
   cursor: pointer;
+
+  transition: all 0.3s ease-in-out;
+  border-radius: 4px;
+  &:focus {
+    outline: 3px solid var(--color-dark-gray-cyan);
+    outline-offset: 3px;
+  }
 
   ${hoverSupported(css`
     &:hover {
@@ -174,10 +188,13 @@ function MainBody() {
       </BackgroundWrapper>
       <CardsWrapper length={filterList.length}>
         {filterList.length > 0 ? (
-          <TagsContainer>
+          <TagsContainer
+            aria-live={"polite"}
+            aria-label={"filters applied container"}
+          >
             <InnerTagsContainer>
               {filterList.map((entry, idx) => (
-                <TagContainer
+                <ClickableWrapper
                   key={`tag-gen-${idx}`}
                   onClick={() => {
                     const result = [];
@@ -190,24 +207,30 @@ function MainBody() {
 
                     setFilterList(result);
                   }}
+                  aria-label={`remove applied filter "${entry}"`}
                 >
-                  <Tag>{entry}</Tag>
-                  <CrossContainer>
-                    <Cross
-                      src={"/frontendmentor_11/icon-remove.svg"}
-                      alt={"remove icon"}
-                    />
-                  </CrossContainer>
-                </TagContainer>
+                  <TagContainer>
+                    <Tag>{entry}</Tag>
+                    <CrossContainer>
+                      <Cross
+                        src={"/frontendmentor_11/icon-remove.svg"}
+                        alt={"remove icon"}
+                      />
+                    </CrossContainer>
+                  </TagContainer>
+                </ClickableWrapper>
               ))}
             </InnerTagsContainer>
-            <Clear
+
+            <ClickableWrapper
+              key={"clear-button"}
               onClick={() => {
                 setFilterList([]);
               }}
+              aria-label={"clear all filters button"}
             >
-              Clear
-            </Clear>
+              <Clear>Clear</Clear>
+            </ClickableWrapper>
           </TagsContainer>
         ) : (
           ""

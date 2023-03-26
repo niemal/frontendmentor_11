@@ -3,6 +3,7 @@ import { MainContext } from "../MainBody";
 import styled, { css, keyframes } from "styled-components";
 import { hoverSupported } from "../hoverSupported";
 import { QUERIES } from "../constants";
+import ClickableWrapper from "../ClickableWrapper";
 
 const appear = keyframes`
   0% {
@@ -124,7 +125,7 @@ const TagsWrapper = styled.div`
   }
 `;
 
-const Tag = styled.span`
+const Tag = styled.button`
   user-select: none;
   padding: 4px;
   background-color: var(--color-light-gray-cyan);
@@ -136,6 +137,11 @@ const Tag = styled.span`
   cursor: pointer;
   opacity: ${(p) => (p.enabled ? "0.7" : "1")};
   transition: all 0.3s ease-in-out;
+
+  &:focus {
+    outline: 3px solid var(--color-dark-gray-cyan);
+    outline-offset: 3px;
+  }
 
   ${hoverSupported(css`
     &:hover {
@@ -172,46 +178,54 @@ function Card({ item, data, ...props }) {
       <Logo src={item.logo} alt={`${item.company} logo`} />
       <DetailsWrapper>
         <TopRow>
-          <CompanyName>{item.company}</CompanyName>
+          <CompanyName aria-label={"company name"}>{item.company}</CompanyName>
           {item.new ? <IsNew>NEW!</IsNew> : ""}
           {item.featured ? <IsFeatured>FEATURED</IsFeatured> : ""}
         </TopRow>
-        <EntryDesc>{item.position}</EntryDesc>
+        <EntryDesc aria-label={"job position"}>{item.position}</EntryDesc>
         <BottomRow>
-          <BottomEntry>{item.postedAt}</BottomEntry>
+          <BottomEntry aria-label={"when it was posted"}>
+            {item.postedAt}
+          </BottomEntry>
           <BottomDot />
-          <BottomEntry>{item.contract}</BottomEntry>
+          <BottomEntry aria-label={"contact information"}>
+            {item.contract}
+          </BottomEntry>
           <BottomDot />
-          <BottomEntry>{item.location}</BottomEntry>
+          <BottomEntry aria-label={"job location"}>{item.location}</BottomEntry>
         </BottomRow>
       </DetailsWrapper>
       <TagsWrapper>
-        <Tag
+        <ClickableWrapper
           enabled={filterList.includes(item.role)}
           onClick={() => {
             addToFilter(item.role);
           }}
+          aria-label={"job role"}
         >
-          {item.role}
-        </Tag>
-        <Tag
+          <Tag>{item.role}</Tag>
+        </ClickableWrapper>
+
+        <ClickableWrapper
           enabled={filterList.includes(item.level)}
           onClick={() => {
             addToFilter(item.level);
           }}
+          aria-label={"job level"}
         >
-          {item.level}
-        </Tag>
+          <Tag>{item.level}</Tag>
+        </ClickableWrapper>
         {item.languages.map((lang) => (
-          <Tag
+          <ClickableWrapper
             enabled={filterList.includes(lang)}
             key={`${item.id}-${lang}`}
             onClick={() => {
               addToFilter(lang);
             }}
+            aria-label={"language required"}
           >
-            {lang}
-          </Tag>
+            <Tag>{lang}</Tag>
+          </ClickableWrapper>
         ))}
       </TagsWrapper>
     </Wrapper>
